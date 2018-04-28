@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>259</width>
-    <height>137</height>
+    <width>261</width>
+    <height>129</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,9 +18,12 @@
     <rect>
      <x>50</x>
      <y>20</y>
-     <width>161</width>
+     <width>160</width>
      <height>30</height>
     </rect>
+   </property>
+   <property name="placeholderText">
+    <string>学号</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="pwdEdit">
@@ -28,12 +31,15 @@
     <rect>
      <x>50</x>
      <y>49</y>
-     <width>161</width>
+     <width>160</width>
      <height>30</height>
     </rect>
    </property>
    <property name="echoMode">
     <enum>QLineEdit::Password</enum>
+   </property>
+   <property name="placeholderText">
+    <string>密码</string>
    </property>
   </widget>
   <widget class="QPushButton" name="LoginButton">
@@ -41,12 +47,25 @@
     <rect>
      <x>50</x>
      <y>90</y>
-     <width>161</width>
+     <width>80</width>
      <height>30</height>
     </rect>
    </property>
    <property name="text">
-    <string>Login</string>
+    <string>借书</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="LoginButton_2">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>90</y>
+     <width>80</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>还书</string>
    </property>
   </widget>
  </widget>
