@@ -13,7 +13,7 @@ def runMain():
     signin.show()
 
     mainWin = MyMainWindow()
-    mainWin.btn.clicked.connect(signin.ok)
+    mainWin.retbtn.clicked.connect(signin.ok)
     signin.login_sig.connect(mainWin.ok)
 
     # mainWin.show()

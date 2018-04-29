@@ -6,6 +6,7 @@ from ui.SignIn_ui import *
 class LoginDialog(QDialog, Ui_LoginDiaog):
 
     login_sig = pyqtSignal(bool, str)
+    type = True
 
     def __init__(self):
         super().__init__()
@@ -14,9 +15,11 @@ class LoginDialog(QDialog, Ui_LoginDiaog):
 
     def initUI(self):
         self.setupUi(self)
-        self.LoginButton.clicked.connect(self.clicked)
+        self.LoginButton.clicked.connect(lambda: self.clicked(True))
+        self.LoginButton_2.clicked.connect(lambda: self.clicked(False))
 
-    def clicked(self):
+    def clicked(self, type):
+        self.type = type
         self.close()
 
     def ok(self):
@@ -26,7 +29,7 @@ class LoginDialog(QDialog, Ui_LoginDiaog):
         username = self.usernameEdit.text()
         pwd = self.pwdEdit.text()
         if username == pwd and username != '':
-            self.login_sig.emit(True, username)
+            self.login_sig.emit(self.type, username)
             self.usernameEdit.setText("")
             self.pwdEdit.setText("")
             self.hide()
