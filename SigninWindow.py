@@ -5,7 +5,7 @@ from ui.SignIn_ui import *
 
 class LoginDialog(QDialog, Ui_LoginDiaog):
 
-    login_sig = pyqtSignal(bool)
+    login_sig = pyqtSignal(bool, str)
 
     def __init__(self):
         super().__init__()
@@ -19,11 +19,17 @@ class LoginDialog(QDialog, Ui_LoginDiaog):
     def clicked(self):
         self.close()
 
+    def ok(self):
+        self.show()
+
     def closeEvent(self, event):
-        if self.usernameEdit.text() == self.pwdEdit.text() and self.usernameEdit.text() != '':
-            self.login_sig.emit(True)
-            # self.hide()
-            event.accept()
+        username = self.usernameEdit.text()
+        pwd = self.pwdEdit.text()
+        if username == pwd and username != '':
+            self.login_sig.emit(True, username)
+            self.usernameEdit.setText("")
+            self.pwdEdit.setText("")
+            self.hide()
         else:
             print("密码错误")
-            event.ignore()
+        event.ignore()
