@@ -3,7 +3,8 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QMainWindow, QDialog, QPushB
                              QTextBrowser, QGridLayout, QTableView, QTableWidget,
                              QTableWidgetItem, QFrame)
 from PyQt5.QtGui import QIcon, QStandardItemModel
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, QUrl
+from PyQt5.QtMultimedia import QMediaPlayer
 from ui.Main_ui import *
 import pymysql, time
 from comm import *
@@ -20,10 +21,17 @@ class MyMainWindow(QWidget):
 
         self.initUI()
         self.link()
+        self.js = '/home/pi/pyqt/mp3/js.mp3'
+        self.hs = '/home/pi/pyqt/mp3/hs.mp3'
+        self.tx = '/home/pi/pyqt/mp3/tx.mp3'
 
 
     def initUI(self):
         # self.setupUi(self)
+
+        self.player = QMediaPlayer()
+        self.player.setVolume(100)
+
         bgHbox = QHBoxLayout()
         bgrid = QGridLayout()
         bgrid.setSpacing(10)
@@ -107,6 +115,8 @@ class MyMainWindow(QWidget):
             self.setWindowTitle("借阅信息")
         else:
             self.setWindowTitle("归还信息")
+            self.player.setMedia(QUrl.fromLocalFile(self.tx))
+            self.player.play()
 
         self.idLabelval.setText(id)
         ret = self.dbcmd("select Name, Class from stu where Id = '{0}'".format(id))
@@ -150,6 +160,12 @@ class MyMainWindow(QWidget):
         item = QTableWidgetItem(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
         self.table.setItem(self.row, j, item)
         self.row += 1
+
+        if self.type:
+            self.player.setMedia(QUrl.fromLocalFile(self.js))
+        else:
+            self.player.setMedia(QUrl.fromLocalFile(self.hs))
+        self.player.play()
 
     # 退出时
     def ret(self):
