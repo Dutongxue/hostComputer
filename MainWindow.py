@@ -29,8 +29,8 @@ class MyMainWindow(QWidget):
     def initUI(self):
         # self.setupUi(self)
 
-        self.player = QMediaPlayer()
-        self.player.setVolume(100)
+        # self.player = QMediaPlayer()
+        # self.player.setVolume(100)
 
         bgHbox = QHBoxLayout()
         bgrid = QGridLayout()
