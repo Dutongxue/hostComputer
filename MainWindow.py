@@ -1,14 +1,17 @@
 from PyQt5.QtWidgets import (QApplication, QWidget, QMainWindow, QDialog, QPushButton, QDesktopWidget,
                              QHBoxLayout, QVBoxLayout, QLineEdit, QLabel,
                              QTextBrowser, QGridLayout, QTableView, QTableWidget,
-                             QTableWidgetItem)
+                             QTableWidgetItem, QFrame)
 from PyQt5.QtGui import QIcon, QStandardItemModel
+from PyQt5.QtCore import pyqtSignal
 from ui.Main_ui import *
 import pymysql, time
+from comm import *
 
 class MyMainWindow(QWidget):
 
     type = False
+    type_sig = pyqtSignal(bool)
 
     def __init__(self):
         super().__init__()
@@ -17,6 +20,7 @@ class MyMainWindow(QWidget):
 
         self.initUI()
         self.link()
+
 
     def initUI(self):
         # self.setupUi(self)
@@ -46,12 +50,12 @@ class MyMainWindow(QWidget):
         self.retbtn = QPushButton("退出")
         self.retbtn.clicked.connect(self.ret)
 
-        self.insertbtn = QPushButton("插入")
-        self.insertbtn.clicked.connect(self.insertClick)
+        # self.insertbtn = QPushButton("插入")
+        # self.insertbtn.clicked.connect(self.insertClick)
 
-        line = QtWidgets.QFrame()
-        line.setFrameShape(QtWidgets.QFrame.VLine)
-        line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        line = QFrame()
+        line.setFrameShape(QFrame.VLine)
+        line.setFrameShadow(QFrame.Sunken)
 
         rightVbox = QVBoxLayout()
         self.table = QTableWidget()
@@ -73,7 +77,7 @@ class MyMainWindow(QWidget):
         leftVbox.addLayout(classHbox)
         leftVbox.addStretch(1)
         leftVbox.addWidget(self.retbtn)
-        leftVbox.addWidget(self.insertbtn)
+        # leftVbox.addWidget(self.insertbtn)
         leftVbox.addStretch(20)
 
         bgHbox.addLayout(leftVbox)
@@ -92,12 +96,13 @@ class MyMainWindow(QWidget):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    def insertClick(self, item):
-        self.addItem(["这是书名", "这是ID"])
+    # def insertClick(self, item):
+    #     self.addItem(["这是书名", "这是ID"])
 
     # 载入Main窗口
     def ok(self, type, id):
         self.type = type
+        self.type_sig.emit(type)
         if type:
             self.setWindowTitle("借阅信息")
         else:
@@ -105,7 +110,8 @@ class MyMainWindow(QWidget):
 
         self.idLabelval.setText(id)
         ret = self.dbcmd("select Name, Class from stu where Id = '{0}'".format(id))
-        if ret is not None:
+        # print(ret)
+        if len(ret) != 0:
             self.nameLableval.setText(ret[0][0])
             self.classLabelval.setText(ret[0][1] + "  ")
         self.show()
@@ -116,8 +122,13 @@ class MyMainWindow(QWidget):
             self.db = pymysql.connect('localhost', 'enheng', '123456', 'sorting', charset='utf8')
         except pymysql.err.Error:
             print("db Link error")
+            self.close()
         else:
             self.cursor = self.db.cursor()
+            self.c = comm(self.db, self.cursor)
+            self.type_sig.connect(self.c.settype)
+            self.c.book_sig.connect(self.addItem)
+            self.c.start()
 
     # 数据库查询
     def dbcmd(self, cmd):
@@ -126,7 +137,7 @@ class MyMainWindow(QWidget):
             self.db.commit()
             return self.cursor.fetchall()
         except:
-            # self.db.rollback()
+            self.db.rollback()
             print("db Select error")
 
     # 添加数据项
@@ -143,8 +154,11 @@ class MyMainWindow(QWidget):
     # 退出时
     def ret(self):
         self.table.clearContents()
+        self.row = 0
         self.hide()
 
     def closeEvent(self, a0: QtGui.QCloseEvent):
         if hasattr(self, 'db'):
+            self.c.quit()
+            self.cursor.close()
             self.db.close()

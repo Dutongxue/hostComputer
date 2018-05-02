@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QDialog, QDeskto
 
 from MainWindow import *
 from SigninWindow import *
+from comm import *
 
 
 def runMain():
@@ -17,6 +18,8 @@ def runMain():
     signin.login_sig.connect(mainWin.ok)
 
     # mainWin.show()
+    # c = comm()
+    # c.start()
 
     sys.exit(app.exec_())
 
